@@ -97,7 +97,14 @@
         <p class="joke">Wait for better results!</p>
         <p class="image-properties" id="image-properties"></p>
         <img id="image-preview" src="" alt="Image Preview">
+        
+        <!-- Add the file upload form here -->
+        <form id="imageUploadForm" enctype="multipart/form-data">
+            <input type="file" name="image" id="imageInput" accept="image/*">
+            <button type="submit">Upload Image</button>
+        </form>
     </div>
+
 
     <script>
         let uploaded = false;
