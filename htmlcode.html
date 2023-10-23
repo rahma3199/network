@@ -5,7 +5,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-image: url('');
+            background-image: url('https://www.fiverr.com/usamarahouani/improve-your-photo-quality-low-to-high-resolution');
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;
@@ -84,6 +84,7 @@
     <header>
         <h1>RA: Your Image Quality Enhancement App</h1>
         <p class="additional-text">Enhance image quality using machine learning techniques.</p>
+        <a href="https://rahma3199.github.io/network/htmlcode.html">Link to My Image Upload App</a>
     </header>
     <div class="container">
         <div class="button-container">
@@ -97,22 +98,39 @@
         <p class="joke">Wait for better results!</p>
         <p class="image-properties" id="image-properties"></p>
         <img id="image-preview" src="" alt="Image Preview">
-        
-        <!-- Add the file upload form here -->
-        <form id="imageUploadForm" enctype="multipart/form-data">
-            <input type="file" name="image" id="imageInput" accept="image/*">
-            <button type="submit">Upload Image</button>
-        </form>
     </div>
-
 
     <script>
         let uploaded = false;
 
         function uploadImage() {
-            // Trigger file input when the "Upload an Image" button is clicked.
-            document.getElementById('file-input').click();
+            const form = document.getElementById('upload-form');
+            const messageElement = document.getElementById('message');
+
+            // Create a FormData object to send the image.
+            const formData = new FormData(form);
+
+            // Send a POST request to your server with the uploaded image.
+            fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Display a success message.
+                    messageElement.textContent = 'Image uploaded successfully.';
+                } else {
+                    // Display an error message if the upload fails.
+                    messageElement.textContent = 'Image upload failed. Please try again.';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                messageElement.textContent = 'An error occurred. Please try again later.';
+            });
         }
+
 
         function handleFileSelect(event) {
             const fileInput = event.target;
