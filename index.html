@@ -103,11 +103,24 @@
 
         function handleFileSelect(event) {
             selectedFile = event.target.files[0];
-        }
+            
+            // Image preview
+            const imagePreview = document.getElementById('image-preview');
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+            }
+            
+            reader.readAsDataURL(selectedFile);
+}
+
 
         function uploadImage() {
+            const messageElement = document.getElementById('message');
+            
             if (!selectedFile) {
-                alert("Please choose an image first.");
+                messageElement.textContent = "Please choose an image first.";
                 return;
             }
 
@@ -121,16 +134,17 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Image uploaded successfully.');
+                    messageElement.textContent = 'Image uploaded successfully.';
                 } else {
-                    alert('Image upload failed. Please try again.');
+                    messageElement.textContent = 'Image upload failed. Please try again.';
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred. Please try again later.');
+                messageElement.textContent = 'An error occurred. Please try again later.';
             });
         }
+
     </script>
 </body>
 </html>
