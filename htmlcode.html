@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RA: Your Image Quality Enhancement App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        header {
+            background-color: #000000;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        .container {
+            margin: 50px auto;
+            width: 80%;
+            max-width: 600px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .action-button {
+            flex: 1;
+            padding: 20px;
+            font-size: 18px;
+            background-color: #000000;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .action-button:hover {
+            background-color: #2980b9;
+        }
+        #download-link {
+            margin-top: 20px;
+            font-size: 18px;
+            text-decoration: none;
+            color: #a16126;
+            display: block;
+        }
+        #file-input {
+            display: none;
+        }
+        .additional-text {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        .waiting-time {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        .image-properties {
+            font-size: 18px;
+            margin-top: 10px;
+            color: red; /* Set text color to red */
+        }
+        #image-preview {
+            max-width: 100%;
+            max-height: 300px; /* Limit the height of the preview */
+            margin-top: 20px;
+        }
+        
+    </style>
+</head>
+<body>
+    <header>
+        <h1>RA: Your Image Quality Enhancement App</h1>
+        <p class="additional-text">Enhance image quality using machine learning techniques.</p>
+        <a href="https://rahma3199.github.io/network/htmlcode.html">Link to My Image Upload App</a>
+    </header>
+    <div class="container">
+        <!-- Begin Form for Image Upload -->
+        <form ref='uploadForm' 
+              id='upload-form' 
+              action='/upload' 
+              method='post' 
+              encType="multipart/form-data">
+    
+            <div class="button-container">
+                <label for="file-input" class="action-button">Upload an Image</label>
+                <!-- Hidden submit button for the form. -->
+                <input type="submit" style="display: none;" id="submit-button">
+                <button class="action-button" onclick="downloadImage()">Download Image</button>
+            </div>
+    
+            <input type="file" id="file-input" name="sampleFile" accept="image/*" onchange="handleFileSelect(event)">
+        </form>
+        <!-- End Form for Image Upload -->
+    
+        <p id="message"></p>
+        <a id="download-link" href="#" download="enhanced-image.jpg"></a>
+        <p class="waiting-time">Estimated waiting time is ... seconds.</p>
+        <p class="joke">Wait for better results!</p>
+        <p class="image-properties" id="image-properties"></p>
+        <img id="image-preview" src="" alt="Image Preview">
+    </div>
+    
+
+    <script>
+        let uploaded = false;
+
+        function uploadImage() {
+            const form = document.getElementById('upload-form');
+            const messageElement = document.getElementById('message');
+
+            // Create a FormData object to send the image.
+            const formData = new FormData(form);
+
+            // Send a POST request to your server with the uploaded image.
+            fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Display a success message.
+                    messageElement.textContent = 'Image uploaded successfully.';
+                } else {
+                    // Display an error message if the upload fails.
+                    messageElement.textContent = 'Image upload failed. Please try again.';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                messageElement.textContent = 'An error occurred. Please try again later.';
+            });
+        }
+
+
+        function handleFileSelect(event) {
+            const fileInput = event.target;
+            const messageElement = document.getElementById('message');
+            const imagePropertiesElement = document.getElementById('image-properties');
+            const imagePreview = document.getElementById('image-preview');
+
+            if (fileInput.files.length === 1) {
+                const file = fileInput.files[0];
+
+                // Create an image element to get image properties and display a preview.
+                const img = new Image();
+                img.src = URL.createObjectURL(file);
+
+                img.onload = function () {
+                    // Once the image is loaded, display its properties and preview.
+                    uploaded = true;
+                    messageElement.textContent = 'Image uploaded successfully.';
+                    document.getElementById('download-link').style.display = 'block';
+                    const properties = `Image Size: ${Math.round(file.size / 1024)} KB, Resolution: ${img.width}x${img.height}`;
+                    imagePropertiesElement.textContent = properties;
+
+                    // Display the image preview.
+                    imagePreview.src = img.src;
+                };
+            }
+        }
+
+        function downloadImage() {
+            const messageElement = document.getElementById('message');
+
+            if (uploaded) {
+                // Provide the download link if an image is uploaded.
+                messageElement.textContent = '';
+                document.getElementById('download-link').style.display = 'block';
+            } else {
+                // Display a message if no image is uploaded.
+                messageElement.textContent = 'Please upload an image first.';
+                document.getElementById('download-link').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -88,11 +88,9 @@
     </header>
     <div class="container">
         <div class="button-container">
-            <label for="file-input" class="action-button">Upload an Image</label>
-            <button class="action-button" onclick="downloadImage()">Download Image</button>
+            <label for="file-input" class="action-button">Choose an Image</label>
+            <button id="upload-btn" class="action-button" onclick="uploadImage()">Upload Image</button>
         </div>
-        <p id="message"></p>
-        <a id="download-link" href="#" download="enhanced-image.jpg"></a>
         <input type="file" id="file-input" accept="image/*" onchange="handleFileSelect(event)">
         <p class="waiting-time">Estimated waiting time is ... seconds.</p>
         <p class="joke">Wait for better results!</p>
@@ -101,76 +99,37 @@
     </div>
 
     <script>
-        let uploaded = false;
+        let selectedFile;
+
+        function handleFileSelect(event) {
+            selectedFile = event.target.files[0];
+        }
 
         function uploadImage() {
-            const form = document.getElementById('upload-form');
-            const messageElement = document.getElementById('message');
+            if (!selectedFile) {
+                alert("Please choose an image first.");
+                return;
+            }
 
-            // Create a FormData object to send the image.
-            const formData = new FormData(form);
+            const formData = new FormData();
+            formData.append('image', selectedFile);
 
-            // Send a POST request to your server with the uploaded image.
-            fetch('/upload', {
+            fetch('http://localhost:3000/upload', {
                 method: 'POST',
                 body: formData,
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Display a success message.
-                    messageElement.textContent = 'Image uploaded successfully.';
+                    alert('Image uploaded successfully.');
                 } else {
-                    // Display an error message if the upload fails.
-                    messageElement.textContent = 'Image upload failed. Please try again.';
+                    alert('Image upload failed. Please try again.');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                messageElement.textContent = 'An error occurred. Please try again later.';
+                alert('An error occurred. Please try again later.');
             });
-        }
-
-
-        function handleFileSelect(event) {
-            const fileInput = event.target;
-            const messageElement = document.getElementById('message');
-            const imagePropertiesElement = document.getElementById('image-properties');
-            const imagePreview = document.getElementById('image-preview');
-
-            if (fileInput.files.length === 1) {
-                const file = fileInput.files[0];
-
-                // Create an image element to get image properties and display a preview.
-                const img = new Image();
-                img.src = URL.createObjectURL(file);
-
-                img.onload = function () {
-                    // Once the image is loaded, display its properties and preview.
-                    uploaded = true;
-                    messageElement.textContent = 'Image uploaded successfully.';
-                    document.getElementById('download-link').style.display = 'block';
-                    const properties = `Image Size: ${Math.round(file.size / 1024)} KB, Resolution: ${img.width}x${img.height}`;
-                    imagePropertiesElement.textContent = properties;
-
-                    // Display the image preview.
-                    imagePreview.src = img.src;
-                };
-            }
-        }
-
-        function downloadImage() {
-            const messageElement = document.getElementById('message');
-
-            if (uploaded) {
-                // Provide the download link if an image is uploaded.
-                messageElement.textContent = '';
-                document.getElementById('download-link').style.display = 'block';
-            } else {
-                // Display a message if no image is uploaded.
-                messageElement.textContent = 'Please upload an image first.';
-                document.getElementById('download-link').style.display = 'none';
-            }
         }
     </script>
 </body>
