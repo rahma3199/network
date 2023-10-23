@@ -3,7 +3,6 @@ const multer = require('multer');
 const app = express();
 const port = 3000;
 
-// Create a storage engine using Multer.
 const storage = multer.diskStorage({
     destination: './uploads', // Specify the destination folder for uploaded images.
     filename: function (req, file, callback) {
